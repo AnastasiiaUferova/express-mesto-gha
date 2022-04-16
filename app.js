@@ -22,6 +22,9 @@ app.use((req, res, next) => {
 
 app.use(userRoutes);
 app.use(cardRoutes);
+app.use((req,res) => {
+  res.status(400).send({message: "Ресурс не найден."})
+})
 
 
 app.listen(PORT, () => {

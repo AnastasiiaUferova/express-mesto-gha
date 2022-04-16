@@ -8,14 +8,21 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then(user => res.send({ data: user }))
+    .then((user) => {
+      if(user === null){
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден.'})
+        return
+      }
+      res.send({ data: user })})
     .catch((err) => {
       if(err.name === 'CastError'){
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' })
+        res.status(400).send({ message: 'Некорректный id пользователя.' })
         return
       }
     res.status(500).send({ message: 'Произошла ошибка.'});
 })};
+
+//'Пользователь по указанному _id не найден.'
 
 module.exports.createUser = (req, res) => {
   const {name, about, avatar} = req.body;

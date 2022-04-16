@@ -39,14 +39,15 @@ module.exports.likeCard = (req, res) => { Card.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   { new: true })
-  .then(card => res.send({ data: card }))
-  .catch((err)=>{
-    if(err.name === 'ValidationError'){
-      res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' })
+  .then((card) => {
+    if(card === null){
+      res.status(404).send({ message: 'Передан несуществующий _id карточки.' })
       return
     }
+    res.send({ data: card })})
+  .catch((err)=>{
     if(err.name === 'CastError'){
-      res.status(404).send({ message: 'Передан несуществующий _id карточки.' })
+      res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка.' })
       return
     }
     res.status(500).send({ message: 'Произошла ошибка на сервере.'});
@@ -56,18 +57,17 @@ module.exports.likeCard = (req, res) => { Card.findByIdAndUpdate(
 module.exports.dislikeCard = (req, res) => { Card.findByIdAndUpdate(
   req.params.cardId,
   { $pull: { likes: req.user._id } }, // убрать _id из массива
-  { new: true },
-) .then(card => res.send({ data: card }))
-.catch((err)=>{
-  if(err.name === 'ValidationError'){
-    res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка.' })
-    console.log(err)
-    return
-  }
-  if(err.name === 'CastError'){
-    res.status(404).send({ message: 'Передан несуществующий _id карточки.' })
-    console.log(err)
-    return
-  }
-res.status(500).send({ message: 'Произошла ошибка на сервере.'});
+  { new: true })
+  .then((card) => {
+    if(card === null){
+      res.status(404).send({ message: 'Передан несуществующий _id карточки.' })
+      return
+    }
+    res.send({ data: card })})
+  .catch((err)=>{
+    if(err.name === 'CastError'){
+      res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка.' })
+      return
+    }
+    res.status(500).send({ message: 'Произошла ошибка на сервере.'});
 })};

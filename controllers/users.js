@@ -42,7 +42,7 @@ module.exports.getUserById = (req, res, err, next) => {
 
 module.exports.createUser = (req, res, err, next) => {
   const {
-    name, about, avatar, email,
+    name, about, avatar, email, _id,
   } = req.body;
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
@@ -51,6 +51,7 @@ module.exports.createUser = (req, res, err, next) => {
       avatar,
       email,
       password: hash,
+      _id,
     }))
     .then((user) => {
       if (err.name === 'ValidationError') {
@@ -59,7 +60,7 @@ module.exports.createUser = (req, res, err, next) => {
       if (err.code === 11000) {
         throw new ConflictError('Пользователь с таким email уже существует');
       }
-      res.send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch(next);
 };

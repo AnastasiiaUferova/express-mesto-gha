@@ -39,6 +39,10 @@ router.patch('/users/me/avatar', celebrate({
 
 router.get('/users', auth, getAllUsers);
 router.patch('/users/me/avatar', auth, changeUserAvatar);
-router.get('/users/:userId', auth, getUserById);
+router.get('/users/:userId', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().alphanum().length(24).hex(),
+  }),
+}), auth, getUserById);
 
 module.exports = router;

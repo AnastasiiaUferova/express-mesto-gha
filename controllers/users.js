@@ -26,24 +26,30 @@ module.exports.getCurrentUser = (req, res, err, next) => {
     .catch(next);
 };
 
-module.exports.getUserById = (req, res, err, next) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user === null) {
         throw new NotFoundError('Пользователь по указанному _id не найден.');
       }
+      res.send({ data: user });
+    })
+    .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Некорректный id пользователя.');
       }
-      res.send({ data: user });
     })
     .catch(next);
 };
 
-module.exports.createUser = (req, res, err, next) => {
+exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, _id,
+    name, about, avatar, email, password,
   } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequestError('Не передан email или пароль');
+  }
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name,
@@ -51,16 +57,15 @@ module.exports.createUser = (req, res, err, next) => {
       avatar,
       email,
       password: hash,
-      _id,
     }))
-    .then((user) => {
+    .then((user) => res.status(200).send({ data: user }))
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
       }
       if (err.code === 11000) {
         throw new ConflictError('Пользователь с таким email уже существует');
       }
-      res.status(200).send({ data: user });
     })
     .catch(next);
 };

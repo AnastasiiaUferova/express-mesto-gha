@@ -46,3 +46,4 @@ router.get('/users/:userId', celebrate({
 }), auth, getUserById);
 
 module.exports = router;
+// new

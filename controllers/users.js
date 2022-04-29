@@ -6,10 +6,10 @@ const NotFoundError = require('../errors/not-found-404');
 const UnauthorizedError = require('../errors/unauthorized-401');
 const ConflictError = require('../errors/conflict-409');
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка.' }));
+    .then((users) => res.send({ data: users }))
+    .catch(next);
 };
 
 module.exports.getCurrentUser = (req, res, err, next) => {
@@ -117,7 +117,7 @@ module.exports.changeUserAvatar = (req, res, err, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password).select('+password')
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!email || !password) {
         throw new UnauthorizedError('Ошибка авторизации');

@@ -22,6 +22,8 @@ router.post('/signup', celebrate({
   }),
 }), createUser);
 
+router.get('/users', auth, getAllUsers);
+
 router.get('/users/me', auth, getCurrentUser);
 
 router.patch('/users/me', celebrate({
@@ -37,7 +39,6 @@ router.patch('/users/me/avatar', celebrate({
   }),
 }), changeUserAvatar);
 
-router.get('/users', auth, getAllUsers);
 router.patch('/users/me/avatar', auth, changeUserAvatar);
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({

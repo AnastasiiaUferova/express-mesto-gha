@@ -18,12 +18,13 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(errors());
 
+app.use(userRoutes);
+app.use(cardRoutes);
+
 app.use('*', () => {
   throw new NotFoundError('Ресурс не найден');
 });
 
-app.use(userRoutes);
-app.use(cardRoutes);
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;

@@ -12,16 +12,18 @@ module.exports.getAllUsers = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getCurrentUser = (req, res, err, next) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((data) => {
       if (!data) {
         throw new NotFoundError('Пользователь по указанному _id не найден.');
       }
+      res.send({ data });
+    })
+    .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Некорректный id пользователя.');
       }
-      res.send({ data });
     })
     .catch(next);
 };

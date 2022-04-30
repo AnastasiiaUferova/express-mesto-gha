@@ -77,7 +77,7 @@ exports.createUser = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.changeUserInfo = (req, res, err, next) => {
+module.exports.changeUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -95,9 +95,13 @@ module.exports.changeUserInfo = (req, res, err, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
+    })
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные при обновлении профиля.');
       }
+
+      next(err);
     })
     .catch(next);
 };

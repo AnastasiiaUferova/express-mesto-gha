@@ -106,7 +106,7 @@ module.exports.changeUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.changeUserAvatar = (req, res, err, next) => {
+module.exports.changeUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -124,9 +124,12 @@ module.exports.changeUserAvatar = (req, res, err, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
+    })
+    .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные при обновлении аватара.');
       }
+      next(err);
     })
     .catch(next);
 };

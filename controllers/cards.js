@@ -25,21 +25,20 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  const userId = req.user._id;
-  const cardId = req.params;
+  const { cardId } = req.params;
 
   Card.findById(cardId)
     .orFail(() => new NotFoundError('Передан несуществующий _id карточки.'))
     .then((card) => {
-      if (!card.owner.equals(userId)) {
-        return next(ForbiddenError('Нельзя удалять чужие карточки'));
+      if (!card.owner.equals(req.user._id)) {
+        return next(new ForbiddenError('Нельзя удалять чужие карточки'));
       }
       return card.remove()
         .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные для удаления карточки.');
+        next(new BadRequestError('Переданы некорректные данные для удаления карточки.'));
       } else {
         next(err);
       }
@@ -53,14 +52,14 @@ module.exports.likeCard = (req, res, next) => {
     { new: true },
   )
     .then((card) => {
-      if (!card) {
-        next(NotFoundError('Передан несуществующий _id карточки.'));
+      if (card === null) {
+        next(new NotFoundError('Передан несуществующий _id карточки.'));
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(BadRequestError('Переданы некорректные данные для постановки лайка.'));
+        next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
       } else {
         next(err);
       }

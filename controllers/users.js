@@ -16,33 +16,34 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((data) => {
       if (!data) {
-        throw new NotFoundError('Пользователь по указанному _id не найден.');
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
       }
       res.send({ data });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Некорректный id пользователя.');
+        next(new BadRequestError('Некорректный id пользователя.'));
+      } else {
+        next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user === null) {
-        throw new NotFoundError('Пользователь по указанному _id не найден.');
+        next(new NotFoundError('Пользователь по указанному _id не найден.'));
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Некорректный id пользователя.');
+        next(new BadRequestError('Некорректный id пользователя.'));
+      } else {
+        next(err);
       }
-      next(err);
-    })
-    .catch(next);
+    });
 };
 
 exports.createUser = (req, res, next) => {
@@ -51,7 +52,7 @@ exports.createUser = (req, res, next) => {
   } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestError('Не передан email или пароль');
+    next(new BadRequestError('Не передан email или пароль'));
   }
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
@@ -68,13 +69,14 @@ exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       if (err.code === 11000) {
-        throw new ConflictError('Пользователь с таким email уже существует');
+        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else {
+        next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.changeUserInfo = (req, res, next) => {
@@ -93,17 +95,16 @@ module.exports.changeUserInfo = (req, res, next) => {
         res.send({ data: user });
       }
       if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        next(new NotFoundError('Пользователь с указанным _id не найден.'));
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при обновлении профиля.');
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(err);
       }
-
-      next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.changeUserAvatar = (req, res, next) => {
@@ -122,16 +123,16 @@ module.exports.changeUserAvatar = (req, res, next) => {
         res.send({ data: user });
       }
       if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        next(new NotFoundError('Пользователь с указанным _id не найден.'));
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при обновлении аватара.');
+        next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
+      } else {
+        next(err);
       }
-      next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.login = (req, res, next) => {
@@ -139,7 +140,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!email || !password) {
-        throw new UnauthorizedError('Ошибка авторизации');
+        next(new UnauthorizedError('Ошибка авторизации'));
       }
       const token = jwt.sign({ _id: user._id }, 'super-secret-strong-web-code', { expiresIn: '7d' });
       return res

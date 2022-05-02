@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized-401');
-const ForbiddenError = require('../errors/forbidden-403');
 
 module.exports = (req, res, next) => {
   if (!req.cookies.jwt) {
@@ -13,7 +12,7 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, 'super-secret-strong-web-code');
   } catch (err) {
     // отправим ошибку, если не получилось
-    throw new ForbiddenError('Необходима авторизация');
+    throw new UnauthorizedError('Необходима авторизация');
   }
 
   req.user = payload; // записываем пейлоуд в объект запроса

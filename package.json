@@ -33,6 +33,8 @@
     "config": "3.3.1",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.3",
+    "helmet": "^5.0.2",
+    "isurl": "^4.0.2",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.10",

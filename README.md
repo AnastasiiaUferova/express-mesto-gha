@@ -45,15 +45,15 @@ Centralized errors handling via customized error classes.
 * Cookies
 
 ## Installation instructions:
-```
-git clone https://github.com/AnastasiiaUferova/express-mesto-gha.git
+``
+git clone https://github.com/AnastasiiaUferova/express-mesto-gha.git``
 
-npm install - installs the dependencies;
+``npm install`` — installs the dependencies;
 
-npm run dev — starts the server;
+``npm run dev`` — starts the server;
 
-npm run start — starts the server with hot-reload;
-```
-### Future project development
+``npm run start`` — starts the server with hot-reload;
+
+## Future project development
 
 Frontend and backend deployment from a cloud server. [Joint version of the project](https://github.com/AnastasiiaUferova/react-mesto-api-full)

@@ -16,13 +16,13 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((data) => {
       if (!data) {
-        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('The user with the specified _id was not found.'));
       }
       res.send({ data });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id пользователя.'));
+        next(new BadRequestError('Invalid user id.'));
       } else {
         next(err);
       }
@@ -33,13 +33,13 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user === null) {
-        next(new NotFoundError('Пользователь по указанному _id не найден.'));
+        next(new NotFoundError('The user with the specified _id was not found.'));
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id пользователя.'));
+        next(new BadRequestError('Invalid user id.'));
       } else {
         next(err);
       }
@@ -52,7 +52,7 @@ exports.createUser = (req, res, next) => {
   } = req.body;
 
   if (!email || !password) {
-    next(new BadRequestError('Не передан email или пароль'));
+    next(new BadRequestError('Email or password were not sent'));
   }
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
@@ -69,10 +69,10 @@ exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+        next(new BadRequestError('Incorrect data was passed during user creation.'));
       }
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
+        next(new ConflictError('User with this email already exists'));
       } else {
         next(err);
       }
@@ -95,12 +95,12 @@ module.exports.changeUserInfo = (req, res, next) => {
         res.send({ data: user });
       }
       if (!user) {
-        next(new NotFoundError('Пользователь с указанным _id не найден.'));
+        next(new NotFoundError('The user with the specified _id was not found.'));
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+        next(new BadRequestError('Incorrect data was sent when updating the profile.'));
       } else {
         next(err);
       }
@@ -123,12 +123,12 @@ module.exports.changeUserAvatar = (req, res, next) => {
         res.send({ data: user });
       }
       if (!user) {
-        next(new NotFoundError('Пользователь с указанным _id не найден.'));
+        next(new NotFoundError('The user with the specified _id was not found.'));
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
+        next(new BadRequestError('Incorrect data was sent when updating the avatar.'));
       } else {
         next(err);
       }
@@ -140,7 +140,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!email || !password) {
-        next(new UnauthorizedError('Ошибка авторизации'));
+        next(new UnauthorizedError('Authorisation Error'));
       }
       const token = jwt.sign({ _id: user._id }, 'super-secret-strong-web-code', { expiresIn: '7d' });
       return res

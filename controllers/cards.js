@@ -17,7 +17,7 @@ module.exports.createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
+        next(new BadRequestError('Incorrect data was sent when creating a card.'));
       } else {
         next(err);
       }
@@ -28,17 +28,17 @@ module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findById(cardId)
-    .orFail(() => new NotFoundError('Передан несуществующий _id карточки.'))
+    .orFail(() => new NotFoundError('A non-existent _id of the card was passed.'))
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
-        return next(new ForbiddenError('Нельзя удалять чужие карточки'));
+        return next(new ForbiddenError("You can not delete other people's cards"));
       }
       return card.remove()
-        .then(() => res.send({ message: 'Карточка удалена' }));
+        .then(() => res.send({ message: 'Card removed' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные для удаления карточки.'));
+        next(new BadRequestError('Incorrect data for deleting card was passed.'));
       } else {
         next(err);
       }
@@ -53,13 +53,13 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card === null) {
-        next(new NotFoundError('Передан несуществующий _id карточки.'));
+        next(new NotFoundError('A non-existent _id of the card was passed.'));
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
+        next(new BadRequestError('Incorrect data for liking card was passed.'));
       } else {
         next(err);
       }
@@ -74,13 +74,13 @@ module.exports.dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (card === null) {
-        next(new NotFoundError('Передан несуществующий _id карточки.'));
+        next(new NotFoundError('A non-existent _id of the card was passed.'));
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные для снятия лайка.'));
+        next(new BadRequestError('Incorrect data for removing like was passed.'));
       } else {
         next(err);
       }

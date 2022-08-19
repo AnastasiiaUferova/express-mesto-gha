@@ -27,9 +27,7 @@ creates controller for user login.
 
 ### Validation
 
-The queries that reach the server are getting validated via celebrate middleware and joi validation library.
-Validation and server errors are handled and returned
-API is protected with authorization middleware.
+The queries that reach the server are getting validated via celebrate middleware and joi validation library. Validation and server errors are handled and returned API is protected with authorization middleware.
 
 ### Errors handling
 

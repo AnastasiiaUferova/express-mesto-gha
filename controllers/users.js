@@ -148,7 +148,7 @@ module.exports.login = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
         })
-        .send({ message: 'Пользователь успешно залогирован' });
+        .send({ token });
     })
     .catch(next);
 };

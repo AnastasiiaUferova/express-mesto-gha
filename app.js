@@ -46,11 +46,11 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.get('/signout', (req, res) => {
-  res.status(200).clearCookie('jwt').send({ message: 'Выход' });
+  res.status(200).clearCookie('jwt').send({ message: 'Logout' });
 });
 
 app.use('*', () => {
-  throw new NotFoundError('Ресурс не найден');
+  throw new NotFoundError('Source was not found');
 });
 
 app.use(errors());

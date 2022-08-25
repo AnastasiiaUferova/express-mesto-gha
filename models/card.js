@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    validate: [validator.isURL, 'Необходимо ввести валидную ссылку'],
+    validate: [validator.isURL, 'Valid link is required.'],
   },
   owner: {
     type: mongoose.ObjectId,

@@ -21,14 +21,14 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (link) => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/.test(link),
-      message: 'Невалидная ссылка',
+      message: 'Valid link is required.',
     },
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    validate: [validator.isEmail, 'Необходимо ввести валидный e-mail'],
+    validate: [validator.isEmail, 'Valid email is required.'],
 
   },
   password: {
